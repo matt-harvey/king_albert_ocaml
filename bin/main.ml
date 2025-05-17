@@ -1,3 +1,3 @@
-module Suit = King_albert.Suit;;
+module Card = King_albert.Card;;
 
-Suit.all |> List.iter (fun suit -> suit |> Suit.to_colored_string |> print_endline)
+Card.all |> List.iter (fun card -> card |> Card.to_styled_string |> print_endline)
