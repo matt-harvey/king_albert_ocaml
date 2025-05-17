@@ -1,0 +1,4 @@
+(executable
+ (public_name ka)
+ (name main)
+ (libraries king_albert_ml))
