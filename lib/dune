@@ -1,2 +1,3 @@
 (library
+ (libraries containers unix)
  (name king_albert))

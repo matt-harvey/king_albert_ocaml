@@ -19,7 +19,7 @@
  (name king_albert_ml)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml)
+ (depends ocaml containers)
  (tags
   ("add topics" "to describe" your project)))
 
