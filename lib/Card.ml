@@ -5,7 +5,7 @@ let suit (_, suit) = suit
 let color (_, suit) = suit |> Suit.color
 let ansi_color (_, suit) = suit |> Suit.ansi_color
 
-let to_styled_string card =
+let to_styled_string (card : t) : string =
       (card |> ansi_color |> AnsiColor.to_string) ^
         (card |> rank |> Rank.to_string) ^
         (card |> suit |> Suit.to_unstyled_string) ^
