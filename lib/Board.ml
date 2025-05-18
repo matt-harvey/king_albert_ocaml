@@ -25,6 +25,8 @@ let from_deck (d : Deck.t) : t = [|
   Position.Reserve(Option.Some(d.(51)));
 |]
 
+let position_at board index = board.(index)
+
 let max_column_length (board : t) : int =
   Array.fold_left (fun acc pos -> match pos with
       | Position.Column(cards) -> (
@@ -34,7 +36,14 @@ let max_column_length (board : t) : int =
       | _ -> acc
     ) 0 board
 
+let update_position index new_position board = board.(index)<-new_position
+
+let clear_screen = "\027[H\027[J"
+
 let put (out : Out_channel.t) (board : t) =
+  output_string out clear_screen;
+  output_string out clear_screen;
+  Out_channel.flush out;
   let blank : string = "    " in
 
   (* Print references to foundations *)
@@ -90,3 +99,4 @@ let put (out : Out_channel.t) (board : t) =
   done;
 
   output_string out "\n\n";
+  Out_channel.flush out;

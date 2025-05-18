@@ -1,5 +1,4 @@
-module Card = King_albert.Card;;
-module Deck = King_albert.Deck;;
-module Board = King_albert.Board;;
+module Game = King_albert.Game;;
 
-Deck.make_shuffled |> Board.from_deck |> Board.put stdout
+let game = Game.make in
+Game.play Out_channel.stdout In_channel.stdin game;
