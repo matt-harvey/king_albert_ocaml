@@ -22,7 +22,7 @@ let from_deck (d : Deck.t) : t =
    ; Position.Reserve (Option.Some d.(50))
    ; Position.Reserve (Option.Some d.(51)) |]
 
-let position_at board index = board.(index)
+let position_at (board : t) (index : int) = board.(index)
 
 let max_column_length (board : t) : int =
   Array.fold_left
@@ -34,7 +34,7 @@ let max_column_length (board : t) : int =
       | _ -> acc )
     0 board
 
-let update_position index new_position board = board.(index) <- new_position
+let update_position (index : int) (new_position : Position.t) (board : t) = board.(index) <- new_position
 
 let clear_screen = "\027[H\027[J"
 

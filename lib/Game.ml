@@ -2,14 +2,14 @@ type t = {board: Board.t; mutable game_state: GameState.t}
 
 let make = {board= Deck.make_shuffled |> Board.from_deck; game_state= GameState.Prepared}
 
-let rec play out_channel in_channel game =
+let rec play (out_channel : out_channel) (in_channel : in_channel) (game : t) : unit =
   game.game_state <- GameState.Playing ;
   while game.game_state <> GameState.Quit do
     Board.put out_channel game.board ;
     consume_move out_channel in_channel game
   done
 
-and consume_move out_channel in_channel game =
+and consume_move (out_channel : out_channel) (in_channel : in_channel) (game : t) : unit =
   output_string out_channel (AnsiColor.to_string AnsiColor.Green) ;
   let board = game.board in
   let break_loop = ref false in
