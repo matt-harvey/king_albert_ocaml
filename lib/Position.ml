@@ -34,7 +34,11 @@ let to_string_at (position : t) (index : int) : string =
   match position with
   | Foundation card -> Card.to_styled_string card
   | Column cards -> (
-      let maybe_card = List.nth_opt (List.rev cards) index in
-      match maybe_card with Option.Some card -> Card.to_styled_string card | None -> "   " )
+      let list_length = List.length cards in
+      let rev_index = list_length - index - 1 in
+      if rev_index < 0 then "   "
+      else
+        let maybe_card = List.nth_opt cards rev_index in
+        match maybe_card with Option.Some card -> Card.to_styled_string card | None -> "   " )
   | Reserve (Option.Some card) -> Card.to_styled_string card
   | Reserve Option.None -> "   "
