@@ -24,14 +24,13 @@ and consume_move out_channel in_channel game =
           game.game_state <- GameState.Quit ;
           break_loop := true )
         else
-          let move = Move.from_str input in
-          match move with
+          match Move.from_str input with
           | Option.Some {origin; destination} ->
               let origin_position = Board.position_at board origin in
               let destination_position = Board.position_at board destination in
               let origin_can_give = Position.can_give origin_position in
               if origin_can_give then
-                let new_origin, card_given = origin_position |> Position.give in
+                let updated_origin_position, card_given = origin_position |> Position.give in
                 match card_given with
                 | Option.Some card -> (
                     let destination_can_receive = Position.can_receive destination_position card in
@@ -42,9 +41,9 @@ and consume_move out_channel in_channel game =
                         output_string out_channel "\n\n" ;
                         ()
                     | true ->
-                        let new_destination = Position.receive destination_position card in
-                        Board.update_position origin new_origin board ;
-                        Board.update_position destination new_destination board ;
+                        let updated_destionation_position = Position.receive destination_position card in
+                        Board.update_position origin updated_origin_position board ;
+                        Board.update_position destination updated_destionation_position board ;
                         break_loop := true )
                 | Option.None -> ()
               else ()
