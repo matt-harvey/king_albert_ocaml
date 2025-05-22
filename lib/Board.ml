@@ -25,14 +25,10 @@ let from_deck (d : Deck.t) : t =
 let position_at (board : t) (index : int) = board.(index)
 
 let foundations (board : t) : Position.t list =
-  board
-  |> Array.to_list
-  |> List.filter (fun (pos) -> match pos with Position.Foundation(_, _) -> true | _ -> false)
+  board |> Array.to_list
+  |> List.filter (fun pos -> match pos with Position.Foundation (_, _) -> true | _ -> false)
 
-let is_won board =
-  board
-  |> foundations
-  |> List.for_all Position.is_complete_foundation
+let is_won board = board |> foundations |> List.for_all Position.is_complete_foundation
 
 let max_column_length (board : t) : int =
   Array.fold_left
