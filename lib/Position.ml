@@ -1,5 +1,10 @@
 type t = Foundation of Card.t | Column of Card.t list | Reserve of Card.t Option.t
 
+let is_complete_foundation (foundation : t) : bool =
+  match foundation with
+  | Foundation (rank, _) -> rank = Rank.max
+  | _ -> false
+
 let can_give (position : t) : bool =
   match position with
   | Foundation _ -> false

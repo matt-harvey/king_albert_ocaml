@@ -1,1 +1,1 @@
-type t = Prepared | Playing | Won | Quit
+type t = Playing | Won | Quit
