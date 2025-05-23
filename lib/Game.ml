@@ -2,12 +2,21 @@ type t = {board: Board.t; state: GameState.t}
 
 let make : t = {board= Deck.make_shuffled |> Board.from_deck; state= GameState.Playing}
 
-let rec play (out_channel : out_channel) (in_channel : in_channel) (game : t) : unit =
-  let {board; _} = game in
-  Board.put out_channel board ;
-  while {board ; state=GameState.Playing} = consume_move out_channel in_channel game do
-    Board.put out_channel board
-  done
+let is_playing = function
+  | {board=_; state=GameState.Playing} -> true
+  | _ -> false
+
+let put (out_channel : out_channel) ({board ; state=_} : t) : unit = Board.put out_channel board
+
+let rec play (out_channel : out_channel) (in_channel : in_channel) (game : t) =
+  game |> put out_channel;
+  game_snaps out_channel in_channel game
+  |> Seq.iter (put out_channel)
+
+and game_snaps out_channel in_channel =
+  Seq.unfold (fun g -> match g with
+    { board=_ ; state=GameState.Playing} -> Some (g, g |> consume_move out_channel in_channel)
+    | _ -> None)
 
 and consume_move (out_channel : out_channel) (in_channel : in_channel) (game : t) : t =
   let put str = output_string out_channel str in
