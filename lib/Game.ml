@@ -4,36 +4,42 @@ let make : t = {board= Deck.make_shuffled |> Board.from_deck; state= GameState.P
 
 let is_playing = function {board= _; state= GameState.Playing} -> true | _ -> false
 
-let put (out_channel : out_channel) ({board; state= _} : t) : unit = Board.put out_channel board
+let rec play (out_channel : out_channel) (in_channel : in_channel) (game : t) : unit =
+  game |> game_snapshots out_channel in_channel |> Seq.iter (fun _ -> ())
 
-let rec play (out_channel : out_channel) (in_channel : in_channel) (game : t) =
-  game |> put out_channel ;
-  game_snaps out_channel in_channel game |> Seq.iter (put out_channel)
+and put (out_channel : out_channel) ({board; state} : t) : unit =
+  match state with
+  | GameState.Playing -> Board.put out_channel board
+  | GameState.Quit -> ()
+  | GameState.Won ->
+      output_string out_channel "Congratulation! You won!\n\n" ;
+      Out_channel.flush out_channel
 
-and game_snaps out_channel in_channel =
+and game_snapshots (out_channel : out_channel) (in_channel : in_channel) =
   Seq.unfold (fun g ->
       match g with
-      | {board= _; state= GameState.Playing} -> Some (g, g |> consume_move out_channel in_channel)
+      | {board= _; state= GameState.Playing} -> Some (g, consume_move out_channel in_channel g)
       | _ -> None )
 
 and consume_move (out_channel : out_channel) (in_channel : in_channel) (game : t) : t =
-  let put str = output_string out_channel str in
+  put out_channel game ;
+  let put_message str = output_string out_channel str in
   output_string out_channel (AnsiColor.to_string AnsiColor.Green) ;
   let {board; state} = game in
   let game_state = ref state in
   let break_loop = ref false in
   while not !break_loop do
-    put "Enter your move: " ;
+    put_message "Enter your move: " ;
     Out_channel.flush out_channel ;
     match In_channel.input_line in_channel with
     | None -> ()
-    | Some "quit" | Some "exit" ->
-        game_state := GameState.Quit ;
-        break_loop := true
     | Some input -> (
       match Move.from_str input with
-      | None -> put "Invalid move. Please enter your move (two letters) or 'quit' to quit.\n\n"
-      | Some {origin; destination} ->
+      | None -> put_message "Invalid move. Please enter your move (two letters) or 'quit' to quit.\n\n"
+      | Some Move.Exit ->
+          game_state := GameState.Quit ;
+          break_loop := true
+      | Some (Move.CardMove {origin; destination}) ->
           let origin_position = Board.position_at board origin in
           let destination_position = Board.position_at board destination in
           if Position.can_give origin_position then
@@ -45,11 +51,9 @@ and consume_move (out_channel : out_channel) (in_channel : in_channel) (game : t
                   let updated_destination_position = Position.receive destination_position card in
                   Board.update_position origin updated_origin_position board ;
                   Board.update_position destination updated_destination_position board ;
-                  game_state :=
-                    if Board.is_won board then (put "You won! Well done!\n\n" ; GameState.Won)
-                    else GameState.Playing ;
+                  game_state := if Board.is_won board then GameState.Won else GameState.Playing ;
                   break_loop := true )
-                else put "Invalid move. Please enter your move (two letters) or 'quit' to quit.\n\n"
+                else put_message "Invalid move. Please enter your move (two letters) or 'quit' to quit.\n\n"
           else () )
   done ;
   {board; state= !game_state}
