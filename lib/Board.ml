@@ -19,10 +19,10 @@ let from_deck (d : Deck.t) : t = CharMap.empty
   |> CharMap.add 'n' (Position.Reserve (Option.Some d.(45)))
   |> CharMap.add 'o' (Position.Reserve (Option.Some d.(46)))
   |> CharMap.add 'p' (Position.Reserve (Option.Some d.(47)))
-  |> CharMap.add 'r' (Position.Reserve (Option.Some d.(48)))
-  |> CharMap.add 's' (Position.Reserve (Option.Some d.(49)))
-  |> CharMap.add 't' (Position.Reserve (Option.Some d.(50)))
-  |> CharMap.add 'u' (Position.Reserve (Option.Some d.(51)))
+  |> CharMap.add 'q' (Position.Reserve (Option.Some d.(48)))
+  |> CharMap.add 'r' (Position.Reserve (Option.Some d.(49)))
+  |> CharMap.add 's' (Position.Reserve (Option.Some d.(50)))
+  |> CharMap.add 't' (Position.Reserve (Option.Some d.(51)))
 
 let position_at (key : char) (board : t): Position.t = CharMap.find key board
 
