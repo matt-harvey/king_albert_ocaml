@@ -1,6 +1,7 @@
 type t = {board: Board.t; state: GameState.t}
 
 let make : t = {board= Deck.make_shuffled |> Board.from_deck; state= GameState.Playing}
+
 let is_playing = function {board= _; state= GameState.Playing} -> true | _ -> false
 
 let rec play (out_channel : out_channel) (in_channel : in_channel) (game : t) : unit =
@@ -49,9 +50,10 @@ and consume_move (out_channel : out_channel) (in_channel : in_channel) (game : t
             | Some card ->
                 if Position.can_receive destination_position card then (
                   let updated_destination_position = Position.receive destination_position card in
-                  new_board := board
-                  |> Board.update_position origin updated_origin_position
-                  |> Board.update_position destination updated_destination_position;
+                  new_board :=
+                    board
+                    |> Board.update_position origin updated_origin_position
+                    |> Board.update_position destination updated_destination_position ;
                   game_state := if Board.is_won !new_board then GameState.Won else GameState.Playing ;
                   break_loop := true )
                 else put_message "Invalid move. Please enter your move (two letters) or 'quit' to quit.\n\n"
