@@ -1,7 +1,7 @@
-type t = CardMove of {origin: int; destination: int} | Exit
+type t = CardMove of {origin: char; destination: char} | Exit
 
-let char_to_position_index (ch : char) : int option =
-  if ch < 'a' || ch > 't' then None else Some (Char.code ch - Char.code 'a')
+let char_to_position_index (ch : char) : char option =
+  if ch < 'a' || ch > 't' then None else Some ch
 
 let from_str (s : string) : t option =
   if s = "quit" || s = "exit" then Some Exit
